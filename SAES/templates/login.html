@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="../static/css/login.css">
+</head>
+<body>
+
+<div class="top">
+{#    <img src="/static/images/login-top.jpg" alt="" style="width: 100%;height: 136px">#}
+</div>
+
+<div id="particles-js">
+
+    <div class="">{# 原类名: banner #}
+{#        <div class="banner-cover"></div>#}
+{#    <img src="../static/images/bg.jpg" alt="">#}
+        <div class="login-aside">
+            <div id="box-up"></div>
+            <div id="box-down">
+                <div class="error-box"></div>
+                <form action="" class="registerform">
+                    {% csrf_token %}
+                    <div class="fm-item">
+                        <label for="loginId" class="form-label">皮久系统登录</label>
+                        <input type="text" placeholder="请输入账号" id="username" class="i-text">
+                    </div>
+                    <div class="fm-item">
+                        <label for="loginId" class="form-label">登录密码</label>
+                        <input type="password" placeholder="请输入密码" id="pwd" class="i-text">
+                    </div>
+                    <div class="fm-item yzm-box">
+                        <label for="loginId" class="form-label">验证码</label>
+                        <input type="text" placeholder="输入验证码" maxlength="10" id="yzm" class="i-text yzm">
+                        <div class="ui-yzm">
+                            <img width="112" height="37" src="/get_valid_img/" alt="验证码" class="yzm-img">
+                        </div>
+                    </div>
+                    <div class="fm-item">
+                        <label for="loginId" class="form-label"></label>
+                        <input type="button" value="" class="btn-login" id="send-btn">
+                    </div>
+{#                    <div class="tip">#}
+{#                        <span>还没有账号?点我</span>#}
+{#                        <a href="/register/" style="color: darkblue">注册</a>#}
+{#                    </div>#}
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/static/js/jquery-3.3.js"></script>
+<script src="/static/js/particles.min.js"></script>
+<script src="/static/js/app.js"></script>
+<script>
+    $('#send-btn').click(function () {
+        $.ajax({
+            url: "",
+            type: 'post',
+            data: {
+                user: $('#username').val(),
+                pwd: $('#pwd').val(),
+                code: $('#yzm').val(),
+                csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+            },
+            success: function (response) {
+                if (response.static) {
+                    location.href = '/homepage/';
+                } else {
+                    $(".error-box").html(response.err_msg);
+
+                };
+                {# 账号密码输入错误 聚焦密码输入框 #}
+                if (response.err_msg == '账号或密码错误') {
+                    {#$(".yzm-img").attr('src',"/get_valid_img/");#}
+                    {#$(".yzm").val("");#}
+                    $("input[type='password']").focus();
+                };
+            {#    验证码输入错误聚焦验证码输入框#}
+                if (response.err_msg == '验证码错误') {
+                    $(".yzm").val("").focus();
+                };
+            },
+        });
+    });
+    $(".yzm-img").click(function () {
+        this.src += "?";
+    });
+</script>
+</body>
+</html>
